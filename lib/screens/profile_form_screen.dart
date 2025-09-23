@@ -5,6 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:profile_app/core/constants/app_constants.dart';
 
+import '../features/data/remote/model/profile_model.dart';
+
 class ProfileFormScreen extends StatefulWidget {
   final Profile? profile;
 
@@ -16,7 +18,7 @@ class ProfileFormScreen extends StatefulWidget {
 
 class _ProfileFormScreenState extends State<ProfileFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _apiService = ApiService();
+  // final _apiService = ApiService();
   final _imagePicker = ImagePicker();
 
   late TextEditingController _firstNameController;
@@ -84,26 +86,25 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
 
     try {
       final profile = Profile(
-        id: widget.profile?.id,
+        id: widget.profile!.id,
         firstName: _firstNameController.text.trim(),
         lastName: _lastNameController.text.trim(),
         email: _emailController.text.trim(),
-        phone: _phoneController.text.trim().isEmpty
-            ? null
-            : _phoneController.text.trim(),
-        address: _addressController.text.trim().isEmpty
-            ? null
-            : _addressController.text.trim(),
+        phone: _phoneController.text.trim(),
+        address: _addressController.text.trim(),
+        profileImage: '',
+        createdAt: null,
+        updatedAt: null,
       );
 
       Profile savedProfile;
       if (widget.profile == null) {
-        savedProfile = (await _apiService.createProfile(
-          profile,
-          _selectedImage,
-        ))!;
+        // savedProfile = (await _apiService.createProfile(
+        //   profile,
+        //   _selectedImage,
+        // ))!;
       } else {
-        savedProfile = await _apiService.updateProfile(profile, _selectedImage);
+        // savedProfile = await _apiService.updateProfile(profile, _selectedImage);
       }
 
       ScaffoldMessenger.of(context).showSnackBar(

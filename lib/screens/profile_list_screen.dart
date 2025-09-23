@@ -1,5 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:profile_app/core/constants/app_constants.dart';
+
+import '../features/data/remote/model/profile_model.dart';
 import 'profile_form_screen.dart';
 
 class ProfileListScreen extends StatefulWidget {
@@ -10,8 +13,8 @@ class ProfileListScreen extends StatefulWidget {
 }
 
 class _ProfileListScreenState extends State<ProfileListScreen> {
-  final _apiService = ApiService();
-  List<Profile> _profiles = [];
+  // final _apiService = ApiService();
+  final List<Profile> _profiles = [];
   bool _isLoading = true;
 
   @override
@@ -23,9 +26,9 @@ class _ProfileListScreenState extends State<ProfileListScreen> {
   Future<void> _loadProfiles() async {
     try {
       setState(() => _isLoading = true);
-      final profiles = await _apiService.getProfiles();
+      // final profiles = await _apiService.getProfiles();
       setState(() {
-        _profiles = profiles;
+        // _profiles = profiles;
         _isLoading = false;
       });
     } catch (e) {
@@ -62,7 +65,7 @@ class _ProfileListScreenState extends State<ProfileListScreen> {
 
     if (confirmed == true) {
       try {
-        await _apiService.deleteProfile(profile.id!);
+        // await _apiService.deleteProfile(profile.id);
         _loadProfiles();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -119,7 +122,7 @@ class _ProfileListScreenState extends State<ProfileListScreen> {
                       leading: CircleAvatar(
                         backgroundImage: profile.profileImage != null
                             ? CachedNetworkImageProvider(
-                                '${ApiService.baseUrl}/uploads/${profile.profileImage}',
+                                '${ApiConstants.baseUrl}/uploads/${profile.profileImage}',
                               )
                             : null,
                         child: profile.profileImage == null
@@ -132,10 +135,7 @@ class _ProfileListScreenState extends State<ProfileListScreen> {
                       title: Text('${profile.firstName} ${profile.lastName}'),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(profile.email),
-                          if (profile.phone != null) Text(profile.phone!),
-                        ],
+                        children: [Text(profile.email), Text(profile.phone)],
                       ),
                       isThreeLine: profile.phone != null,
                       trailing: PopupMenuButton<String>(

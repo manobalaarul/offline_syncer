@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:profile_app/core/constants/app_constants.dart';
 
 import '../features/data/remote/model/profile_model.dart';
+import '../features/domain/entities/profile_entities.dart';
 
 class ProfileFormScreen extends StatefulWidget {
-  final Profile? profile;
+  final ProfileEntities? profile;
 
   const ProfileFormScreen({super.key, this.profile});
 
@@ -143,50 +143,50 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
           padding: EdgeInsets.all(16),
           children: [
             // Profile Image Section
-            Center(
-              child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey[200],
-                        image: _selectedImage != null
-                            ? DecorationImage(
-                                image: FileImage(_selectedImage!),
-                                fit: BoxFit.cover,
-                              )
-                            : widget.profile?.profileImage != null
-                            ? DecorationImage(
-                                image: NetworkImage(
-                                  '${ApiConstants.baseUrl}/uploads/${widget.profile!.profileImage}',
-                                ),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
-                      ),
-                      child:
-                          _selectedImage == null &&
-                              widget.profile?.profileImage == null
-                          ? Icon(
-                              Icons.add_a_photo,
-                              size: 40,
-                              color: Colors.grey[600],
-                            )
-                          : null,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Tap to change photo',
-                    style: TextStyle(color: Colors.grey[600]),
-                  ),
-                ],
-              ),
-            ),
+            // Center(
+            //   child: Column(
+            //     children: [
+            //       GestureDetector(
+            //         onTap: _pickImage,
+            //         child: Container(
+            //           width: 120,
+            //           height: 120,
+            //           decoration: BoxDecoration(
+            //             shape: BoxShape.circle,
+            //             color: Colors.grey[200],
+            //             image: _selectedImage != null
+            //                 ? DecorationImage(
+            //                     image: FileImage(_selectedImage!),
+            //                     fit: BoxFit.cover,
+            //                   )
+            //                 : widget.profile?.profileImage != null
+            //                 ? DecorationImage(
+            //                     image: NetworkImage(
+            //                       '${ApiConstants.baseUrl}/uploads/${widget.profile!.profileImage}',
+            //                     ),
+            //                     fit: BoxFit.cover,
+            //                   )
+            //                 : null,
+            //           ),
+            //           child:
+            //               _selectedImage == null &&
+            //                   widget.profile?.profileImage == null
+            //               ? Icon(
+            //                   Icons.add_a_photo,
+            //                   size: 40,
+            //                   color: Colors.grey[600],
+            //                 )
+            //               : null,
+            //         ),
+            //       ),
+            //       SizedBox(height: 8),
+            //       Text(
+            //         'Tap to change photo',
+            //         style: TextStyle(color: Colors.grey[600]),
+            //       ),
+            //     ],
+            //   ),
+            // ),
             SizedBox(height: 24),
 
             // Form Fields

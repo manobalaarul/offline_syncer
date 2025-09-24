@@ -28,6 +28,6 @@ Map<String, dynamic> _$ProfileEntitiesToJson(ProfileEntities instance) =>
       'phone': instance.phone,
       'address': instance.address,
       'profile_image': instance.profileImage,
-      'created_at': instance.createdAt.toIso8601String(),
-      'updated_at': instance.updatedAt.toIso8601String(),
+      'created_at': instance.createdAt!.toIso8601String(),
+      'updated_at': instance.updatedAt!.toIso8601String(),
     };

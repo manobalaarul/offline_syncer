@@ -1,3 +1,3 @@
 class ApiRoutes {
-  static const String getProfiles = "profile.php";
+  static const String getProfiles = "profiles.php";
 }

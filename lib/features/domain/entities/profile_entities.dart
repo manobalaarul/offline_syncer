@@ -31,11 +31,11 @@ class ProfileEntities {
   @JsonKey(name: "address")
   String address;
   @JsonKey(name: "profile_image")
-  String profileImage;
+  String? profileImage;
   @JsonKey(name: "created_at")
-  DateTime createdAt;
+  DateTime? createdAt;
   @JsonKey(name: "updated_at")
-  DateTime updatedAt;
+  DateTime? updatedAt;
 
   ProfileEntities({
     required this.id,

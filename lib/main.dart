@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'app_bloc_provider.dart';
+import 'di/di_module.dart';
+import 'features/utils/app_observer.dart';
 import 'screens/profile_form_screen.dart';
 import 'screens/profile_list_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DiModule().init();
+
+  Bloc.observer = AppObserver();
+
   runApp(MyApp());
 }
 
@@ -12,10 +21,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Profile Manager',
-      theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
-      home: MainScreen(),
+    return MultiBlocProvider(
+      providers: AppBlocProvider.providers,
+      child: MaterialApp(
+        title: 'Profile Manager',
+        theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
+        home: MainScreen(),
+      ),
     );
   }
 }

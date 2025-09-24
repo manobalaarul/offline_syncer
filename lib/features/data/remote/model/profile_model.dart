@@ -1,32 +1,24 @@
 import 'dart:convert';
 
+import 'package:profile_app/features/domain/entities/profile_entities.dart';
+
 List<Profile> profileFromJson(String str) =>
     List<Profile>.from(json.decode(str).map((x) => Profile.fromJson(x)));
 
 String profileToJson(List<Profile> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class Profile {
-  int id;
-  String firstName;
-  String lastName;
-  String email;
-  String phone;
-  String address;
-  String? profileImage;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-
+class Profile extends ProfileEntities {
   Profile({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.phone,
-    required this.address,
-    required this.profileImage,
-    required this.createdAt,
-    required this.updatedAt,
+    required super.id,
+    required super.firstName,
+    required super.lastName,
+    required super.email,
+    required super.phone,
+    required super.address,
+    required super.profileImage,
+    required super.createdAt,
+    required super.updatedAt,
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
@@ -41,6 +33,7 @@ class Profile {
     updatedAt: DateTime.parse(json["updated_at"]),
   );
 
+  @override
   Map<String, dynamic> toJson() => {
     "id": id,
     "first_name": firstName,

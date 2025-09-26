@@ -21,4 +21,16 @@ class ProfileRepositoryImpl implements ProfileRepository {
       return const Left(ServerFailure(message: 'Unexpected error'));
     }
   }
+
+  @override
+  Future<Either<Failure, ProfileEntities>> createProfile(params) async {
+    try {
+      final createProfile = await profileRemoteDatasource.createProfile(params);
+      return Right(createProfile);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } catch (e) {
+      return const Left(ServerFailure(message: 'Unexpected error'));
+    }
+  }
 }

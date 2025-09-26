@@ -14,7 +14,6 @@ ProfileEntities _$ProfileEntitiesFromJson(Map<String, dynamic> json) =>
       email: json['email'] as String,
       phone: json['phone'] as String,
       address: json['address'] as String,
-      profileImage: json['profile_image'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
@@ -27,7 +26,6 @@ Map<String, dynamic> _$ProfileEntitiesToJson(ProfileEntities instance) =>
       'email': instance.email,
       'phone': instance.phone,
       'address': instance.address,
-      'profile_image': instance.profileImage,
       'created_at': instance.createdAt!.toIso8601String(),
       'updated_at': instance.updatedAt!.toIso8601String(),
     };

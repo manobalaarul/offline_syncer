@@ -5,4 +5,5 @@ import '../../entities/profile_entities.dart';
 
 abstract class ProfileRepository {
   Future<Either<Failure, List<ProfileEntities>>> getProfiles(dynamic params);
+  Future<Either<Failure, ProfileEntities>> createProfile(dynamic params);
 }

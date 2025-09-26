@@ -30,8 +30,6 @@ class ProfileEntities {
   String phone;
   @JsonKey(name: "address")
   String address;
-  @JsonKey(name: "profile_image")
-  String? profileImage;
   @JsonKey(name: "created_at")
   DateTime? createdAt;
   @JsonKey(name: "updated_at")
@@ -44,7 +42,6 @@ class ProfileEntities {
     required this.email,
     required this.phone,
     required this.address,
-    required this.profileImage,
     required this.createdAt,
     required this.updatedAt,
   });

@@ -46,6 +46,8 @@ dependencies:
   flutter_bloc: ^9.1.1
   bloc: ^9.0.0
   nested: ^1.0.0
+  offline_syncer:
+    path: ./offline_syncer
 
 dev_dependencies:
   flutter_test:

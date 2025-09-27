@@ -59,7 +59,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     emit(state.copyWith(createProfileStatus: CreateProfileStatus.loading));
 
-    final result = await createProfileUsecase.call(event.profile.toJson());
+    final result = await createProfileUsecase.call(event.profile);
+
     result.fold(
       (failure) {
         emit(

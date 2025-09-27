@@ -28,7 +28,6 @@ class ProfileRemoteDatasourceImpl implements ProfileRemoteDatasource {
           .map((json) => Profile.fromJson(json))
           .toList();
       print(profiles[0].firstName);
-
       return profiles;
     } on DioException catch (e) {
       throw ServerException(
@@ -42,6 +41,7 @@ class ProfileRemoteDatasourceImpl implements ProfileRemoteDatasource {
   @override
   Future<Profile> createProfile(Profile profile) async {
     try {
+      print(profile);
       final profileMap = profile.toJson(); // <-- convert to Map
       print("Submitting Profile Map: $profileMap");
 
@@ -50,21 +50,21 @@ class ProfileRemoteDatasourceImpl implements ProfileRemoteDatasource {
         formData: profileMap,
         path: ApiRoutes.createProfile,
       );
-
-      if (result['success']) {
-        // Prefer API response, fallback to local map
-        return Profile.fromJson(result['data'] ?? profileMap);
+      print(result);
+      if (result['success'] == true) {
+        final profileJson = result['data']?['data'] ?? profileMap;
+        return Profile.fromJson(profileJson);
       } else {
         throw ServerException(
-          message: result['message'] ?? 'Failed to create profile',
+          message: result['data']['message'] ?? 'Failed to create profile',
         );
       }
     } on DioException catch (e) {
       throw ServerException(
-        message: e.response?.data['message'] ?? 'Something went wrong',
+        message: e.response?.data['message'] ?? 'Something went wrong 1',
       );
     } catch (e) {
-      throw ServerException(message: 'Something went wrong');
+      throw ServerException(message: 'Something went wrong 2');
     }
   }
 }

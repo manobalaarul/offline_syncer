@@ -45,17 +45,7 @@ class OfflineSyncManager {
 
     // Initialize Dio with interceptors
     _dio = Dio();
-    _dio.interceptors.add(
-      LogInterceptor(
-        request: true,
-        requestBody: true,
-        requestHeader: true,
-        responseBody: true,
-        responseHeader: true,
-        error: true,
-        logPrint: (obj) => print('🌐 DIO LOG: $obj'),
-      ),
-    );
+    _dio.interceptors.add(LogInterceptor());
 
     // Set default options
     _dio.options = BaseOptions(
@@ -123,14 +113,7 @@ class OfflineSyncManager {
           return response;
         } else {
           print('❌ Direct send failed, storing offline');
-          // Fall back to offline storage if direct send fails
-          await _storeOffline(formId, path, formData);
-          return {
-            'success': false,
-            'message': 'Stored offline - will sync when connection improves',
-            'stored_offline': true,
-            'error': response['error'],
-          };
+          return response;
         }
       } else {
         // No internet - store offline
@@ -170,33 +153,34 @@ class OfflineSyncManager {
     Map<String, dynamic> formData,
   ) async {
     try {
-      final requestData = {
-        'formId': formId,
-        'data': formData,
-        'submittedAt': DateTime.now().toIso8601String(),
-      };
-
       print('📡 Sending POST request to $path');
       final response = await _dio.post(path, data: formData);
+
+      // Check if API returns error inside response
+      if (response.data is Map && response.data['status'] == 'error') {
+        return {
+          'success': false,
+          'statusCode': response.statusCode,
+          'error': response.data['message'], // <-- direct message
+          'data': response.data,
+        };
+      }
 
       return {
         'success': true,
         'statusCode': response.statusCode,
         'data': response.data,
         'message': 'Form submitted successfully',
-        'headers': response.headers.map,
       };
     } on DioException catch (dioError) {
-      print('💥 DioException: ${dioError.message}');
       return {
         'success': false,
         'statusCode': dioError.response?.statusCode,
         'data': dioError.response?.data,
-        'error': dioError.message,
+        'error': dioError.response?.data?['message'] ?? dioError.message,
         'type': dioError.type.toString(),
       };
     } catch (e) {
-      print('💥 Unexpected error: $e');
       return {'success': false, 'error': e.toString()};
     }
   }
@@ -241,13 +225,13 @@ class OfflineSyncManager {
       int failedCount = 0;
 
       for (final data in unsyncedData) {
-        if (data.retryCount >= 3) {
-          print('⏭️ Skipping item ${data.id} (max retries reached)');
-          failedCount++;
-          continue;
-        }
+        // if (data.retryCount >= 3) {
+        //   print('⏭️ Skipping item ${data.id} (max retries reached)');
+        //   failedCount++;
+        //   continue;
+        // }
 
-        final formName = _getFormDisplayName(data.formId);
+        final formName = data.formId;
         print('🔄 Syncing $formName (attempt ${data.retryCount + 1})...');
 
         _onSyncProgress?.call('Syncing $formName...', formName, true);
@@ -300,16 +284,16 @@ class OfflineSyncManager {
       // Merge custom headers with default headers
       final customHeaders = data.customHeaders ?? {};
 
-      final requestData = {
-        'formId': data.formId,
-        'data': decryptedData,
-        'submittedAt': data.createdAt.toIso8601String(),
-      };
+      // final requestData = {
+      //   'formId': data.formId,
+      //   'data': decryptedData,
+      //   'submittedAt': data.createdAt.toIso8601String(),
+      // };
 
       print('📡 Sending sync request to ${data.targetRoute}');
       final response = await _dio.post(
         data.targetRoute,
-        data: requestData,
+        data: decryptedData,
         options: Options(
           headers: customHeaders.isNotEmpty ? customHeaders : null,
         ),
@@ -319,7 +303,7 @@ class OfflineSyncManager {
         'success': true,
         'statusCode': response.statusCode,
         'data': response.data,
-        'message': 'Item synced successfully',
+        'message': response.data['message'],
         'headers': response.headers.map,
       };
     } on DioException catch (dioError) {
@@ -350,9 +334,10 @@ class OfflineSyncManager {
       return {
         'id': data.id,
         'formId': data.formId,
+        'formData': EncryptionHelper().decrypt(data.encryptedData),
         'createdAt': data.createdAt,
         'retryCount': data.retryCount,
-        'formName': _getFormDisplayName(data.formId),
+        'formName': data.formId,
         'targetRoute': data.targetRoute,
         'httpMethod': data.httpMethod,
       };
@@ -372,27 +357,12 @@ class OfflineSyncManager {
     return await _syncPendingDataWithProgress();
   }
 
-  /// Helper to get display name for form
-  String _getFormDisplayName(String formId) {
-    switch (formId.toLowerCase()) {
-      case 'contact_form':
-        return 'Contact Form';
-      case 'feedback_form':
-        return 'Feedback Form';
-      case 'registration_form':
-        return 'Registration Form';
-      case 'survey_form':
-        return 'Survey Form';
-      default:
-        return formId
-            .replaceAll('_', ' ')
-            .split(' ')
-            .map(
-              (word) => word.isEmpty
-                  ? word
-                  : word[0].toUpperCase() + word.substring(1),
-            )
-            .join(' ');
+  Future<bool> deleteUnSyncedData() async {
+    try {
+      await _dbHelper.deleteUnSyncedData();
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 

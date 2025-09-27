@@ -85,6 +85,12 @@ class DatabaseHelper {
     );
   }
 
+  Future<void> deleteUnSyncedData() async {
+    final db = await database;
+
+    await db.delete('sync_data', where: 'isSynced = 0');
+  }
+
   Future<void> close() async {
     final db = await database;
     await db.close();

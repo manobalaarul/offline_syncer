@@ -4,6 +4,7 @@ import 'package:profile_app/features/data/remote/datasource/profile/profile_remo
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../domain/entities/profile_entities.dart';
+import '../../../domain/entities/profile_response_entities.dart';
 import '../../../domain/repository/profile/profile_repository.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
@@ -23,7 +24,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<Either<Failure, ProfileEntities>> createProfile(params) async {
+  Future<Either<Failure, ProfileResponseEntities>> createProfile(params) async {
     try {
       final createProfile = await profileRemoteDatasource.createProfile(params);
       return Right(createProfile);

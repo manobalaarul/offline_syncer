@@ -9,6 +9,7 @@ class ProfileState {
   final ProfileStatus status;
   final CreateProfileStatus createProfileStatus;
   final String? errorMsg;
+  final String? createErrorMsg;
   final String? successMsg;
   final List<ProfileEntities>? profiles;
 
@@ -17,6 +18,7 @@ class ProfileState {
     this.status = ProfileStatus.initial,
     this.createProfileStatus = CreateProfileStatus.initial,
     this.errorMsg,
+    this.createErrorMsg,
     this.successMsg,
     this.profiles,
   });
@@ -26,6 +28,7 @@ class ProfileState {
     ProfileStatus? status,
     CreateProfileStatus? createProfileStatus,
     String? errorMsg,
+    String? createErrorMsg,
     String? successMsg,
     final List<ProfileEntities>? profiles,
   }) {
@@ -34,6 +37,7 @@ class ProfileState {
       status: status ?? this.status,
       createProfileStatus: createProfileStatus ?? this.createProfileStatus,
       errorMsg: errorMsg ?? this.errorMsg,
+      createErrorMsg: createErrorMsg ?? this.createErrorMsg,
       successMsg: successMsg ?? this.successMsg,
       profiles: profiles ?? this.profiles,
     );

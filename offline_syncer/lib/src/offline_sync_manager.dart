@@ -112,7 +112,7 @@ class OfflineSyncManager {
           print('✅ Form sent successfully');
           return response;
         } else {
-          print('❌ Direct send failed, storing offline');
+          print('❌ Direct send failed, ${response['data']['message']}');
           return response;
         }
       } else {
@@ -121,7 +121,7 @@ class OfflineSyncManager {
         await _storeOffline(formId, path, formData);
         return {
           'success': false,
-          'message': 'No internet connection - stored offline for later sync',
+          'message': 'No internet connection - Stored offline for later sync',
           'stored_offline': true,
         };
       }
@@ -132,7 +132,7 @@ class OfflineSyncManager {
         await _storeOffline(formId, path, formData);
         return {
           'success': false,
-          'message': 'Error occurred - stored offline for later sync',
+          'message': 'Error occurred - Stored offline for later sync',
           'stored_offline': true,
           'error': e.toString(),
         };
@@ -237,7 +237,7 @@ class OfflineSyncManager {
         _onSyncProgress?.call('Syncing $formName...', formName, true);
 
         final result = await _syncSingleItem(data);
-
+        print("Result  : $result");
         if (result['success'] == true) {
           await _dbHelper.markAsSynced(data.id!);
           successCount++;
@@ -250,8 +250,18 @@ class OfflineSyncManager {
         } else {
           await _dbHelper.updateRetryCount(data.id!, data.retryCount + 1);
           failedCount++;
-          print('❌ $formName sync failed: ${result['error']}');
-          _onSyncProgress?.call('❌ Failed to send $formName', formName, false);
+          print('$formName sync failed: ${result['error']}');
+          _onSyncProgress?.call(
+            'Failed to send $formName : ${result['data']['message']}',
+            formName,
+            false,
+          );
+          await _dbHelper.deleteUnSyncedDataById(data.id!);
+          _onSyncProgress?.call(
+            'Deleted $formName Data for : ${result['data']['message']}',
+            formName,
+            false,
+          );
         }
 
         await Future.delayed(Duration(milliseconds: 500));

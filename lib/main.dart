@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: AppBlocProvider.providers,
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Profile Manager',
         theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
         home: MainScreen(),

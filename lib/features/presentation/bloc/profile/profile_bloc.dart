@@ -66,7 +66,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         emit(
           state.copyWith(
             createProfileStatus: CreateProfileStatus.error,
-            errorMsg: failure.message,
+            createErrorMsg: failure.message,
             isLoading: false,
           ),
         );
@@ -78,6 +78,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             isLoading: false,
           ),
         );
+        add(GetProfileEvent());
       },
     );
   }

@@ -49,6 +49,18 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
     super.dispose();
   }
 
+  void _showSnackBar(String message, Color backgroundColor) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: backgroundColor,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,52 +137,66 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
             SizedBox(
               height: 50,
               child: BlocConsumer<ProfileBloc, ProfileState>(
+                listenWhen: (previous, current) =>
+                    previous.createProfileStatus != current.createProfileStatus,
                 listener: (context, state) {
-                  // Success case
                   if (state.createProfileStatus == CreateProfileStatus.loaded) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Profile created successfully ✅"),
-                        backgroundColor: Colors.green,
-                      ),
+                    _showSnackBar(
+                      "Profile ${widget.profile == null ? 'created' : 'updated'} successfully ✅",
+                      Colors.green,
                     );
                   }
 
-                  // Error case
                   if (state.createProfileStatus == CreateProfileStatus.error) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          state.errorMsg ?? "Something went wrong ❌",
-                        ),
-                        backgroundColor: Colors.red,
-                      ),
+                    _showSnackBar(
+                      state.createErrorMsg ?? "Something went wrong ❌",
+                      Colors.red,
                     );
                   }
                 },
                 builder: (context, state) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      final profile = Profile(
-                        id: 7, // let backend generate if possible
-                        firstName: _firstNameController.text.trim(),
-                        lastName: _lastNameController.text.trim(),
-                        email: _emailController.text.trim(),
-                        phone: _phoneController.text.trim(),
-                        address: _addressController.text.trim(),
-                      );
+                  final isLoading =
+                      state.createProfileStatus == CreateProfileStatus.loading;
 
-                      if (widget.profile == null) {
-                        context.read<ProfileBloc>().add(
-                          CreateProfileEvent(profile: profile),
-                        );
-                      } else {
-                        // context.read<ProfileBloc>().add(UpdateProfileEvent(profile: profile));
-                      }
-                    },
-                    child:
-                        state.createProfileStatus == CreateProfileStatus.loading
-                        ? const CircularProgressIndicator(color: Colors.white)
+                  return ElevatedButton(
+                    onPressed: isLoading
+                        ? null
+                        : () {
+                            if (_formKey.currentState?.validate() ?? false) {
+                              final profile = Profile(
+                                id:
+                                    widget.profile?.id ??
+                                    0, // Use existing ID for updates
+                                firstName: _firstNameController.text.trim(),
+                                lastName: _lastNameController.text.trim(),
+                                email: _emailController.text.trim(),
+                                phone: _phoneController.text.trim(),
+                                address: _addressController.text.trim(),
+                              );
+
+                              if (widget.profile == null) {
+                                // Create new profile
+                                context.read<ProfileBloc>().add(
+                                  CreateProfileEvent(profile: profile),
+                                );
+                              } else {
+                                // Update existing profile
+                                context.read<ProfileBloc>().add(
+                                  CreateProfileEvent(
+                                    profile: profile,
+                                  ), // or UpdateProfileEvent if you have it
+                                );
+                              }
+                            }
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isLoading ? Colors.grey : null,
+                    ),
+                    child: isLoading
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          )
                         : Text(
                             widget.profile == null
                                 ? 'Create Profile'

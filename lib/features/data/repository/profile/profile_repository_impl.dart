@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:profile_app/features/data/remote/datasource/profile/profile_remote_datasource.dart';
+import '../../remote/datasource/profile/profile_remote_datasource.dart';
 
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
@@ -28,6 +28,18 @@ class ProfileRepositoryImpl implements ProfileRepository {
     try {
       final createProfile = await profileRemoteDatasource.createProfile(params);
       return Right(createProfile);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } catch (e) {
+      return const Left(ServerFailure(message: 'Unexpected error'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, ProfileResponseEntities>> deleteProfile(int id) async {
+    try {
+      final deleteProfile = await profileRemoteDatasource.deleteProfile(id);
+      return Right(deleteProfile);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
     } catch (e) {

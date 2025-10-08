@@ -11,3 +11,9 @@ class CreateProfileEvent extends ProfileEvent {
 
   CreateProfileEvent({required this.profile});
 }
+
+class DeleteProfileEvent extends ProfileEvent {
+  final int id;
+
+  DeleteProfileEvent({required this.id});
+}

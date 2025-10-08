@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:offline_syncer/offline_syncer.dart';
-import 'package:profile_app/core/constants/app_constants.dart';
+import 'core/constants/app_constants.dart';
 
 import 'app_bloc_provider.dart';
 import 'di/di_module.dart';

@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:offline_syncer/offline_syncer.dart';
+import 'package:profile_app/features/domain/usecases/profile/delete_profile_usecase.dart';
 
 import '../core/network/dio_client.dart';
 import '../features/data/remote/datasource/profile/profile_remote_datasource.dart';
@@ -14,11 +15,12 @@ final sl = GetIt.instance;
 class DiModule {
   Future<void> init() async {
     //Bloc
-    sl.registerFactory(() => ProfileBloc(sl(), sl()));
+    sl.registerFactory(() => ProfileBloc(sl(), sl(), sl()));
 
     //Usecase
     sl.registerLazySingleton(() => GetProfileUsecase(sl()));
     sl.registerLazySingleton(() => CreateProfileUsecase(sl()));
+    sl.registerLazySingleton(() => DeleteProfileUsecase(sl()));
 
     //Repository
     sl.registerLazySingleton<ProfileRepository>(

@@ -1,8 +1,9 @@
 import 'package:dartz/dartz.dart';
-import 'package:profile_app/core/error/failures.dart';
-import 'package:profile_app/core/usecases/usecases.dart';
-import 'package:profile_app/features/domain/entities/profile_entities.dart';
-import 'package:profile_app/features/domain/repository/profile/profile_repository.dart';
+
+import '../../../../core/error/failures.dart';
+import '../../../../core/usecases/usecases.dart';
+import '../../entities/profile_entities.dart';
+import '../../repository/profile/profile_repository.dart';
 
 class GetProfileUsecase implements UseCase<List<ProfileEntities>, dynamic> {
   final ProfileRepository repository;

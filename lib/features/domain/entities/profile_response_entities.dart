@@ -28,7 +28,7 @@ class ProfileResponseEntities {
   ProfileResponseEntities({
     required this.status,
     required this.message,
-    required this.profile,
+    this.profile,
   });
 
   factory ProfileResponseEntities.fromJson(Map<String, dynamic> json) =>
@@ -36,4 +36,3 @@ class ProfileResponseEntities {
 
   Map<String, dynamic> toJson() => _$ProfileResponseEntitiesToJson(this);
 }
-

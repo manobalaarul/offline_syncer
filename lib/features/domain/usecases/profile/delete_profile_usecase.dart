@@ -5,15 +5,15 @@ import '../../../../core/usecases/usecases.dart';
 import '../../entities/profile_response_entities.dart';
 import '../../repository/profile/profile_repository.dart';
 
-class CreateProfileUsecase
+class DeleteProfileUsecase
     implements UseCase<ProfileResponseEntities, dynamic> {
   final ProfileRepository repository;
 
-  CreateProfileUsecase(this.repository);
+  DeleteProfileUsecase(this.repository);
 
   @override
-  Future<Either<Failure, ProfileResponseEntities>> call(params) async {
+  Future<Either<Failure, ProfileResponseEntities>> call(id) async {
     // TODO: implement call
-    return await repository.createProfile(params);
+    return await repository.deleteProfile(id);
   }
 }

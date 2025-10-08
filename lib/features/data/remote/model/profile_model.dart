@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:profile_app/features/domain/entities/profile_entities.dart';
+import '../../../domain/entities/profile_entities.dart';
 
 List<Profile> profileFromJson(String str) =>
     List<Profile>.from(json.decode(str).map((x) => Profile.fromJson(x)));

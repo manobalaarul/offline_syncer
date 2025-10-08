@@ -8,7 +8,8 @@ class AppBlocProvider {
   static List<SingleChildWidget> get providers {
     return [
       BlocProvider(
-        create: (context) => ProfileBloc(sl(), sl())..add(GetProfileEvent()),
+        create: (context) =>
+            ProfileBloc(sl(), sl(), sl())..add(GetProfileEvent()),
       ),
     ];
   }

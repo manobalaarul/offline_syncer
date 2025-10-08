@@ -61,6 +61,52 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
     }
   }
 
+  String? _validateName(String? value, String fieldName) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter $fieldName';
+    }
+    if (value.trim().length < 2) {
+      return '$fieldName must be at least 2 characters';
+    }
+    if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+      return '$fieldName must contain only letters';
+    }
+    return null;
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter email';
+    }
+    final emailRegExp = RegExp(
+      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+    ); // basic email pattern
+    if (!emailRegExp.hasMatch(value.trim())) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
+  String? _validatePhone(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter phone number';
+    }
+    if (!RegExp(r'^[0-9]{10}$').hasMatch(value.trim())) {
+      return 'Please enter a valid 10-digit phone number';
+    }
+    return null;
+  }
+
+  String? _validateAddress(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter address';
+    }
+    if (value.trim().length < 5) {
+      return 'Address must be at least 5 characters';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,32 +114,34 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
         title: Text(widget.profile == null ? 'Add Profile' : 'Edit Profile'),
       ),
       body: Form(
+        autovalidateMode: AutovalidateMode.onUnfocus,
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            // First Name
             TextFormField(
               controller: _firstNameController,
               decoration: const InputDecoration(
                 labelText: 'First Name *',
                 border: OutlineInputBorder(),
               ),
-              validator: (value) =>
-                  value?.isEmpty ?? true ? 'Please enter first name' : null,
+              validator: (value) => _validateName(value, "first name"),
             ),
             const SizedBox(height: 16),
 
+            // Last Name
             TextFormField(
               controller: _lastNameController,
               decoration: const InputDecoration(
                 labelText: 'Last Name *',
                 border: OutlineInputBorder(),
               ),
-              validator: (value) =>
-                  value?.isEmpty ?? true ? 'Please enter last name' : null,
+              validator: (value) => _validateName(value, "last name"),
             ),
             const SizedBox(height: 16),
 
+            // Email
             TextFormField(
               controller: _emailController,
               decoration: const InputDecoration(
@@ -101,35 +149,31 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.emailAddress,
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return 'Please enter email';
-                }
-                if (!value!.contains('@')) {
-                  return 'Please enter valid email';
-                }
-                return null;
-              },
+              validator: _validateEmail,
             ),
             const SizedBox(height: 16),
 
+            // Phone
             TextFormField(
               controller: _phoneController,
               decoration: const InputDecoration(
-                labelText: 'Phone',
+                labelText: 'Phone *',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.phone,
+              validator: _validatePhone,
             ),
             const SizedBox(height: 16),
 
+            // Address
             TextFormField(
               controller: _addressController,
               decoration: const InputDecoration(
-                labelText: 'Address',
+                labelText: 'Address *',
                 border: OutlineInputBorder(),
               ),
               maxLines: 3,
+              validator: _validateAddress,
             ),
             const SizedBox(height: 24),
 
@@ -164,9 +208,7 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
                         : () {
                             if (_formKey.currentState?.validate() ?? false) {
                               final profile = Profile(
-                                id:
-                                    widget.profile?.id ??
-                                    0, // Use existing ID for updates
+                                id: widget.profile?.id ?? 0,
                                 firstName: _firstNameController.text.trim(),
                                 lastName: _lastNameController.text.trim(),
                                 email: _emailController.text.trim(),
@@ -175,16 +217,12 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
                               );
 
                               if (widget.profile == null) {
-                                // Create new profile
                                 context.read<ProfileBloc>().add(
                                   CreateProfileEvent(profile: profile),
                                 );
                               } else {
-                                // Update existing profile
                                 context.read<ProfileBloc>().add(
-                                  CreateProfileEvent(
-                                    profile: profile,
-                                  ), // or UpdateProfileEvent if you have it
+                                  CreateProfileEvent(profile: profile),
                                 );
                               }
                             }
